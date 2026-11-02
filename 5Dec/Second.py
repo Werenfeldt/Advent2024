@@ -1,12 +1,36 @@
 rules = dict()
 
-recheck = list()
+number = 0
 
-with open("input/test.txt", 'r') as file:
+def check(line, ite):
+    for idx, el in enumerate(line):
+        elementsAfter = line[idx+1:]
+        r = rules.get(el)
+        if not r:
+            continue
+
+        for ru in r:
+            if ru in elementsAfter:
+                print("in after: ", ru)
+                jdx = line.index(ru)
+                print("jdx: ", jdx)
+                print("ru: ", ru, "needs to be before, ", el)
+                tmp = line.copy()
+                tmp.remove(el)
+                tmp.insert(jdx, el)
+                print("new order: ", tmp)
+                ite += 1
+                line, ite = check(tmp, ite)
+                break
+
+    print("this line should pass", line)
+    return line, ite
+        
+
+with open("input/input.txt", 'r') as file:
     readUpdates = False
     for line in file:
         line = line.strip()
-        #print(line)
 
         if line.isspace() or not line:
             readUpdates = True
@@ -15,42 +39,23 @@ with open("input/test.txt", 'r') as file:
         if readUpdates:
             updates = line.strip().split(",")
             updates.reverse()
-            #print(updates)
-            passes = True
-            for idx, el in enumerate(updates):
-                elementsAfter = updates[idx+1:]
-                #print("Element", el)
-                #print("ElementsAfter: ", elementsAfter)
-                r = rules.get(el)
-                if not r:
-                    continue
-                #print("R: ", r)
-                for ru in r:
-                    if ru in elementsAfter:
-                        print("in after: ", ru)
-                        jdx = updates.index(ru)
-                        print("jdx: ", jdx)
-                        print("ru: ", ru, "needs to be before, ", el)
-                        tmp = updates.copy()
-                        tmp.remove(el)
-                        tmp.insert(jdx, el)
-                        print("new order: ", tmp)
-                        recheck.append(tmp)
-                        break
 
-            if passes:
-                print("passes: ", updates)
+            linePassed, ite = check(updates, 0)
+            print("ite: ", ite)
+            middle = int(linePassed[len(linePassed)//2])
+            print("middle:", middle)
+            if ite != 0:
+                number += middle
+
 
 
         if not readUpdates:
             key, value = line.strip().split("|")
-            #print(key, "|", value)
             rule = rules.get(key)
             if not rule:
                 rule = list()
             rule.append(value)
             rules[key] = rule
 
-print(recheck)
 
-#print(rules)
+print(number)
