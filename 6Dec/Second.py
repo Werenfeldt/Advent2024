@@ -13,6 +13,43 @@ def checkLeaving(idx, jdx):
         return True
     return False
 
+def horiRightCheck(q, z):
+    found = False
+    for idx in range(z, len(map[q])):
+        if map[q][idx] == "#":
+            found = True
+            break
+    return found
+
+def horiLeftCheck(q, z):
+    found = False
+    idx = z
+
+    while idx <= 0 and not found:
+        if map[q][idx] == "#":
+            found = True
+        idx -= 1
+    return found
+
+def horiDownCheck(q, z):
+    found = False
+    for idx in range(q, len(map)):
+        if map[idx][z] == "#":
+            found = True
+            break
+    return found
+
+def horiUpCheck(q, z):
+    found = False
+    idx = q
+
+    while idx <= 0 and not found:
+        if map[idx][z] == "#":
+            found = True
+        idx -= 1
+    return found
+
+
 def checkRight(idx, jdx):
     global marker
 
@@ -35,19 +72,19 @@ def checkRight(idx, jdx):
         if nextPoint != "#":
             if marker == '^':
                 (q,z) = right(idx, jdx)
-                if visited.get((q,z)) == '-' or visited.get((q,z))== '+':
+                if (visited.get((q,z)) == '-' or visited.get((q,z))== '+') and horiRightCheck(q,z):
                     found = True
             elif marker == 'v':
                 (q,z) = left(idx, jdx)
-                if visited.get((q,z)) == '-' or visited.get((q,z)) == '+':
+                if (visited.get((q,z)) == '-' or visited.get((q,z)) == '+') and horiLeftCheck(q,z):
                     found = True
             elif marker == '<':
                 (q,z) = up(idx, jdx)
-                if visited.get((q,z)) == '|' or visited.get((q,z)) == '+':
+                if (visited.get((q,z)) == '|' or visited.get((q,z)) == '+') and horiUpCheck(q,z):
                     found = True
             elif marker == '>':
                 (q,z) = down(idx, jdx)
-                if visited.get((q,z)) == '|' or visited.get((q,z)) == '+':
+                if (visited.get((q,z)) == '|' or visited.get((q,z)) == '+') and horiDownCheck(q,z):
                     found = True
 
             print("right point: ", visited.get((q,z)))
@@ -100,8 +137,11 @@ with open("input/test.txt", 'r') as file:
         line = list(line.strip())
         if "^" in line:
             start = (x, line.index("^"))
-
+        if "#" in line:
+            y = line.index("#")
+        
         map.append(line)
+
     (x, y) = start
     print(start, " - ", map[x][y])
     print("cols: ", len(map), "rows", len(map[0]))
