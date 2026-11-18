@@ -1,44 +1,52 @@
-files = list()
-freespace = list()
+stringlst = list()
 
-def printDisk():
-    for x, file in enumerate(files):
-        for value in range(file):
-            print(x, end="")
-
-        if x != len(files) - 1:
-            free = freespace[x]
-            for space in range(free):
-                print(".", end="")
-
-def printFile(id, file):
-    for _ in range(file):
-        print(id, end="")
-
-def printFreespace(free):
-    for _ in range(free):
-        print(".", end="")
-
-with (open("input/test.txt", 'r') as file):
+with (open("input/input.txt", 'r') as file):
     for line in file:
         lst = list(line.strip())
-        print(lst)
+        #print(lst)
+        isFreeSpace = False
+        index = 0
+        for x in lst:
+            print("X: ", x, "index: ", index, "isFreeSpace: ", isFreeSpace)
+            if isFreeSpace:
+                index += 1
+                for _ in range(int(x)):
+                    stringlst.append(".")
+                isFreeSpace = False
+            else:
+                for _ in range(int(x)):
+                    stringlst.append(index)
+                isFreeSpace = True
 
-        for x in range(0, len(lst)-1, 2):
-            file = int(lst[x])
-            free = int(lst[x+1])
-            printFile(x, file)
-            print("X", x)
+#print(stringlst)
 
-            if x == len(lst)-1:
-                print("xxx: ", x+1)
-                printFile(x+1, int(lst[-1]))
-                break
+lookAtIndex = len(stringlst)-1
 
-            printFreespace(free)
+for idx, space in enumerate(stringlst):
+    if idx+1 == lookAtIndex:
+        break
+    if space == ".":
+        found = False
+        looking = ""
+        while not found:
+            looking = stringlst[lookAtIndex]
+            if looking != ".":
+                found = True
+            else:
+                lookAtIndex -= 1
+        stringlst[idx] = looking
+        stringlst[lookAtIndex] = "."
 
+#print(stringlst)
+result = 0
 
-print(files)
-print(freespace)
+for idx, space in enumerate(stringlst):
+    if idx+1 == lookAtIndex:
+        break
+    sum = idx * int(space)
+    result += sum
+print(result)
 
-
+#too low:
+#91558461993
+#6607511583593
